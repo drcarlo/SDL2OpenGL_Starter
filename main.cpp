@@ -1,81 +1,50 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <assert.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include <GL/gl.h>
+// SDL_MAIN_HANDLED indicates the program has its own main function
+// Do not use the SDL_main method - allowing us to define custom behaviour
+#define SDL_MAIN_HANDLED
+#include "GameEngine.h"
+#include <sstream>
 
-typedef int32_t i32;
-typedef uint32_t u32;
-typedef int32_t b32;
+using namespace GE;
 
-#define WinWidth 800
-#define WinHeight 600
-
-int main(int ArgCount, char** Args)
+int main()
 {
-    if (SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO) < 0) {
-        printf("SDL Init Error: %s", SDL_GetError());
-        return 0;
+    // Create the game engine object
+    GameEngine ge;
+
+    // Initilise the game engine object
+    if (!ge.init()) {
+        display_info_message("Couldn't start SDL. Check console output for error logs");
+        return -1;
     }
 
-    //set opengl attributes, supposed to happen before window creation
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE); //OpenGL core profile
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); //OpenGL 3+
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2); //OpenGL 3.2
+    // Store time at two points in the program
+    Uint32 last_time = SDL_GetTicks(), current_time = 0;
+    int frame_count = 0;
 
-    u32 WindowFlags = SDL_WINDOW_OPENGL;
-    SDL_Window* Window = SDL_CreateWindow("CMP5334 FPS Camera", 100, 100, WinWidth, WinHeight, WindowFlags);
-    assert(Window);
-    SDL_GLContext Context = SDL_GL_CreateContext(Window);
+    //MAIN LOOP
+    while (ge.keep_running()) {
+        // Update game state
+        ge.update();
 
-    //initialize OpenGL stuff
-    SDL_GLContext openglContext = SDL_GL_CreateContext(Window);
-    printf("glGetString (GL_VERSION) returns %s\n", glGetString(GL_VERSION));
+        // Render the frame to the window and calc frame statistics
+        ge.draw();
+        frame_count++;
+        current_time = SDL_GetTicks();
 
-    b32 Running = 1;
-    b32 FullScreen = 0;
-    while (Running)
-    {
-        SDL_Event Event;
-        while (SDL_PollEvent(&Event))
-        {
-            if (Event.type == SDL_KEYDOWN)
-            {
-                switch (Event.key.keysym.sym)
-                {
-                case SDLK_ESCAPE:
-                    Running = 0;
-                    break;
-                case 'f':
-                    FullScreen = !FullScreen;
-                    if (FullScreen)
-                    {
-                        SDL_SetWindowFullscreen(Window, WindowFlags | SDL_WINDOW_FULLSCREEN_DESKTOP);
-                    }
-                    else
-                    {
-                        SDL_SetWindowFullscreen(Window, WindowFlags);
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-            else if (Event.type == SDL_QUIT)
-            {
-                Running = 0;
-            }
+        if (current_time - last_time > 1000) {
+            // string to hold frame timing and construct this message
+            std::ostringstream msg;
+            msg << "FPS = " << frame_count;
+            ge.setwindowtitle(msg.str().c_str());
+            // reset the frame counter
+            frame_count = 0;
+            // update time between frames
+            last_time = current_time;
         }
-
-        glViewport(0, 0, WinWidth, WinHeight);
-        glClearColor(1.f, 0.f, 1.f, 0.f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        SDL_GL_SwapWindow(Window);
     }
-    SDL_GL_DeleteContext(openglContext);
-    SDL_DestroyWindow(Window);
-    SDL_Quit();
+
+    // Destroy game engine
+    ge.shutdown();
+
     return 0;
 }
