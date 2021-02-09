@@ -3,12 +3,95 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace GE {
-	// Vertices to define the triangle - note the CCW winding order
-	GLfloat vertexData[] = {
-		-1.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f
+	// Represents a vertex in the engine
+	struct Vertex {
+		// Location
+		float x, y, z;
+		// Colour
+		float r, g, b, a;
+
+		// Constructors
+		// Sets vertex to passed values
+		Vertex(float _x, float _y, float _z, float _r, float _g, float _b, float _a) {
+			// Location
+			x = _x;
+			y = _y;
+			z = _z;
+			// Position
+			r = _r;
+			g = _g;
+			b = _b;
+			a = _a;
+		}
+
+		// Sets vertex to origin and no colour
+		Vertex() {
+			x = y = z = 0.0f;
+			r = g = b = a = 0.0f;
+		}
 	};
+
+	// Vertices to define the triangle - note the CCW winding order
+	Vertex vertexData[] = {
+		Vertex(-1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f), 
+		Vertex(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f),
+		Vertex(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f)
+	};
+
+	/*Vertex vertexData[] = {
+	Vertex(-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
+	Vertex(-0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
+	Vertex(0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
+
+	Vertex(-0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
+	Vertex(0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
+	Vertex(0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
+
+	// Right side face
+	Vertex(0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f),
+	Vertex(0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f),
+	Vertex(0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f),
+
+	Vertex(0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f),
+	Vertex(0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f),
+	Vertex(0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f),
+
+	//// Back face, note that points are in counter clockwise order
+	Vertex(-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f),
+	Vertex(0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f),
+	Vertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f),
+
+	Vertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f),
+	Vertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f),
+	Vertex(-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f),
+
+	//// Left side face, note that points are in counter clockwise order
+	Vertex(-0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f),
+	Vertex(-0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f),
+	Vertex(-0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f),
+
+	Vertex(-0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f),
+	Vertex(-0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f),
+	Vertex(-0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f),
+
+	//// Top face
+	Vertex(-0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f),
+	Vertex(-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 1.0f),
+	Vertex(0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 1.0f),
+
+	Vertex(0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 1.0f),
+	Vertex(0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f),
+	Vertex(-0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f),
+
+	//// Bottom face, note that points are in counter clockwise order
+	Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f),
+	Vertex(0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f),
+	Vertex(0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f),
+
+	Vertex(0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f),
+	Vertex(-0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f),
+	Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f),
+	};*/
 
 	// Class default constructor
 	TriangleRenderer::TriangleRenderer() {
@@ -50,14 +133,17 @@ namespace GE {
 		// Vertex Shader code
 		const GLchar* V_ShaderCode[] = {
 			"#version 140\n"
-			"in vec2 vertexPos2D;\n"
+			"in vec3 vertexPos3D;\n"
+			"in vec4 vColour;\n"
+			"out vec4 fColour;\n"
 			"uniform mat4 transform;\n"
 			"uniform mat4 view;\n"
 			"uniform mat4 projection;\n"
 			"void main() {\n"
-			"vec4 v = vec4(vertexPos2D.x, vertexPos2D.y, 0, 1);\n"
+			"vec4 v = vec4(vertexPos3D.xyz, 1);\n"
 			"v = projection * view * transform * v;\n"
 			"gl_Position = v;\n"
+			"fColour = vColour;\n"
 			"}\n" };
 		// Copy the shader source to OpenGL for compilation
 		glShaderSource(vertexShader, 1, V_ShaderCode, NULL);
@@ -78,9 +164,10 @@ namespace GE {
 		// Fragment shader code
 		const GLchar* F_ShaderCode[] = {
 			"#version 140\n"
+			"in vec4 fColour;\n"
 			"out vec4 fragmentColour;\n"
 			"void main() {\n"
-			"fragmentColour = vec4(1.0, 0.0, 0.0, 1.0);\n"
+			"fragmentColour = fColour;\n"
 			"}\n"
 		};
 		// Transfer and compile the shader
@@ -112,11 +199,19 @@ namespace GE {
 		if (isProgramLinked != GL_TRUE) {
 			std::cerr << "Failed to link program" << std::endl;
 		}
-		// Now get a link to the vertexPos2D attribute so we can link to our vertices for rendering
-		vertexPos2DLocation = glGetAttribLocation(programId, "vertexPos2D");
+
+		// Get a link to the vColour attribute to add to the shader
+		vertexFragmentColourLocation = glGetAttribLocation(programId, "vColour");
 		// Any errors?
-		if (vertexPos2DLocation == -1) {
-			std::cerr << "Problem getting the vertex2DPos" << std::endl;
+		if (vertexFragmentColourLocation == -1) {
+			std::cerr << "Problem getting vColour" << std::endl;
+		}
+
+		// Now get a link to the vertexPos3D attribute so we can link to our vertices for rendering
+		vertexPos3DLocation = glGetAttribLocation(programId, "vertexPos3D");
+		// Any errors?
+		if (vertexPos3DLocation == -1) {
+			std::cerr << "Problem getting the vertex3DPos" << std::endl;
 		}
 
 		// Link the uniforms to the member fields
@@ -159,16 +254,23 @@ namespace GE {
 		glUniformMatrix4fv(projectionUniformId, 1, GL_FALSE, glm::value_ptr(projectionMat));
 
 		// Define the structure of a vertex for OpenGL to select values from the vertex buffer
-		// store this in the vertexPos2DLocation attribute
-		glVertexAttribPointer(vertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), nullptr);
+		// store this in the vertexPos3DLocation attribute
+		glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, x));
 		// Enable the attribute to be passed vertices from the VBO
-		glEnableVertexAttribArray(vertexPos2DLocation);
+		glEnableVertexAttribArray(vertexPos3DLocation);
+		// Where to find the colour data and what is the size of it
+		// Colour data is 4 floats from the r member, stride is a Vertex apart
+		glVertexAttribPointer(vertexFragmentColourLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, r));
+		// Enable the attribute to be passed vertex colour from the VBO
+		glEnableVertexAttribArray(vertexFragmentColourLocation);
 		// Select the VBO into the context
 		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
 		// Draw the triangle
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertexData)/sizeof(Vertex));
 		// Deselect the attribute from the context
-		glDisableVertexAttribArray(vertexPos2DLocation);
+		glDisableVertexAttribArray(vertexPos3DLocation);
+		// Deselect the attribute from the context
+		glDisableVertexAttribArray(vertexFragmentColourLocation);
 		// Deselect the program from the context
 		glUseProgram(0);
 	}

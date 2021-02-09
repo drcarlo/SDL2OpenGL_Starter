@@ -79,7 +79,11 @@ namespace GE {
 
 		// Stores the attribute to select into the pipeline
 		// Links the triangle certices to the pipeline
-		GLint vertexPos2DLocation;
+		GLint vertexPos3DLocation;
+
+		// Link to vColour attribute which receives a colour and
+		// passes to fColour for fragment shader
+		GLint vertexFragmentColourLocation;
 
 		// Stores the triangle VBO, gets moved from this code to GFX memory
 		GLuint vboTriangle;

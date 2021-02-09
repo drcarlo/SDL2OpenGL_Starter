@@ -64,11 +64,11 @@ namespace GE {
 		cam = new Camera(glm::vec3(0.0f, 0.0f, 5.0f),	// cam position
 			glm::vec3(0.0f, 0.0f, 0.0f),				// cam look at
 			glm::vec3(0.0f, 1.0f, 0.0f),				// cam up direction
-			90.0, w / h, 0.1f, 100.0f);					// fov, aspect ratio, near and far clip planes
+			120, w / h, 0.1f, 100.0f);					// fov, aspect ratio, near and far clip planes
 
 		// Initialise the object renderers
-		quad = new QuadRenderer();
-		quad->init();
+		tri = new TriangleRenderer();
+		tri->init();
 
 		// Woo! All setup so we can return success
 		return true;
@@ -94,7 +94,7 @@ namespace GE {
 	// Update method which updates the game logic
 	// Used to invoke GE object update methods
 	void GameEngine::update() {
-		quad->update();
+		tri->update();
 	}
 
 	// Draw method. Used to render scenes to the window frame
@@ -115,7 +115,7 @@ namespace GE {
 		glEnd();*/
 
 		// Render the VBOs
-		quad->draw(cam);
+		tri->draw(cam);
 
 		SDL_GL_SwapWindow(window);
 	}
@@ -124,10 +124,10 @@ namespace GE {
 	// When additional objects are added, ensure these are also freed safely
 	void GameEngine::shutdown() {
 		// Release object renderers
-		quad->destroy();
+		tri->destroy();
 		
 		// Release memory associate with camera and primitive renderers
-		delete quad;
+		delete tri;
 		delete cam;
 
 		SDL_GL_DeleteContext(glContext);
