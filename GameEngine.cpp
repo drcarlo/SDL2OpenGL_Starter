@@ -61,14 +61,16 @@ namespace GE {
 		}
 
 		// Create camera object
-		cam = new Camera(glm::vec3(0.0f, 0.0f, 5.0f),	// cam position
+		cam = new Camera(glm::vec3(0.0f, 0.0f, 0.0f),	// cam position
 			glm::vec3(0.0f, 0.0f, 0.0f),				// cam look at
 			glm::vec3(0.0f, 1.0f, 0.0f),				// cam up direction
-			120, w / h, 0.1f, 100.0f);					// fov, aspect ratio, near and far clip planes
+			120, w / h, 0.1f, 800.0f);					// fov, aspect ratio, near and far clip planes
+		cam->setTarget(glm::vec3(0.5f, 0.0f, 0.5f));
 
 		// Initialise the object renderers
 		tri = new TriangleRenderer();
 		tri->init();
+		
 
 		// Woo! All setup so we can return success
 		return true;
@@ -101,7 +103,8 @@ namespace GE {
 	// For now, just clears the background
 	void GameEngine::draw() {
 		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// GL Immediate mode to render a triangle to the screen
 		// Requires setting GL minor version to 3.1
@@ -115,7 +118,6 @@ namespace GE {
 		glEnd();*/
 
 		// Render the VBOs
-		tri->draw(cam);
 
 		SDL_GL_SwapWindow(window);
 	}

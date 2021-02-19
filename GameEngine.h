@@ -6,6 +6,12 @@
 #include "Camera.h"
 #include "TriangleRenderer.h"
 #include "QuadRenderer.h"
+#include "ModelRenderer.h"
+
+#include "Terrain.h"
+#include "Texture.h"
+#include "SkyDome.h"
+
 
 namespace GE {
 	class GameEngine {
@@ -37,6 +43,14 @@ namespace GE {
 		// Object renderers
 		TriangleRenderer* tri;
 		QuadRenderer* quad;
+		ModelRenderer* modelRenderer;
+
+		// Scene Objects
+		Texture* terrainTexture;
+		Texture* skydomeTexture;
+		Terrain* terrain;
+		Skydome* skydome;
+
 	};
 
 	// Helper Function
