@@ -44,8 +44,6 @@ namespace GE {
 		// Object renderers
 		TriangleRenderer* tri;
 		QuadRenderer* quad;
-		ModelRenderer* modelRenderer;
-		std::unique_ptr<Model> model;
 
 		// Scene Objects
 		Texture* terrainTexture;

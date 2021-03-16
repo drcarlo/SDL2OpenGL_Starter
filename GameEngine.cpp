@@ -65,9 +65,7 @@ namespace GE {
 		cam->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
 
 		// Initialise the object 
-		modelRenderer = new ModelRenderer(cam);
-		model = std::unique_ptr<Model>(new Model("resources/models/ChibiCarlo.obj"));
-		if (!model->init()) return false;
+
 		// Woo! All setup so we can return success
 		return true;
 	}
@@ -102,7 +100,6 @@ namespace GE {
 		glDepthFunc(GL_LESS);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		modelRenderer->drawModel(model.get());
 
 		// Render the VBOs
 
@@ -116,7 +113,6 @@ namespace GE {
 		
 		// Release memory associate with camera and primitive renderers
 		delete cam;
-		delete modelRenderer;
 
 		SDL_GL_DeleteContext(glContext);
 		SDL_DestroyWindow(window);

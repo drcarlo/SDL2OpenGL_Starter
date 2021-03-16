@@ -2,9 +2,7 @@
 
 Model::~Model()
 {
-    for (unsigned int& vbo : vbos) glDeleteVertexArrays(1, &vbo);
-    for (unsigned int& ibo : ibos) glDeleteBuffers(1, &ibo);
-    for (unsigned int& vbo : vaos) glDeleteBuffers(1, &vbo);
+
 }
 
 bool Model::init()
@@ -61,33 +59,14 @@ bool Model::init()
 
         Texture* texture = new Texture("");
         unsigned int vao, vbo, ibo;
-        glGenBuffers(1, &vbo);
-        glGenBuffers(1, &ibo);
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-                glBindBuffer(GL_ARRAY_BUFFER, vbo);
-                    GLCALL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GE::Vertex), (void*)&vertices[0], GL_STATIC_DRAW));
-                    GLCALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, sizeof(GE::Vertex), (void*)offsetof(GE::Vertex, x)));
-                    GLCALL(glEnableVertexAttribArray(0));
-
-                    GLCALL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GE::Vertex), (void*)offsetof(GE::Vertex, u)));
-                    GLCALL(glEnableVertexAttribArray(1));
-
-                    GLCALL(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(GE::Vertex), (void*)offsetof(GE::Vertex, nx)));
-                    GLCALL(glEnableVertexAttribArray(2));
-
-                    GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-                    GLCALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), (void*)&indices[0], GL_STATIC_DRAW));
-        glBindVertexArray(NULL);
-                glBindBuffer(GL_ARRAY_BUFFER, NULL);
-                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-
+        // Create buffers and vertex arrays here, sending the vertex data to the GPU
+        /*
         textures.push_back(texture);
         vaos.push_back(vao);
         vbos.push_back(vbo);
         ibos.push_back(ibo);
         indexCounts.push_back((unsigned int)indices.size());
-        vertexCounts.push_back((unsigned int)vertices.size());
+        vertexCounts.push_back((unsigned int)vertices.size());*/
     }
 
     // Now we can access the file's contents.

@@ -64,26 +64,14 @@ ModelRenderer::ModelRenderer(GE::Camera* c) : camera(c)
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	// Retrieve attributes/uniforms
-
 	glGenVertexArrays(1, &vertexArrayObject);
 	glBindVertexArray(vertexArrayObject);
-
-	int vPos = glGetAttribLocation(programId, "vertexPosition");
-	int vNorm = glGetAttribLocation(programId, "vertexUV");
-	int vUV = glGetAttribLocation(programId, "vertexNormal");
 
 
 	glUseProgram(programId);
 	
-	
-	projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix");
-	viewMatrixLocation = glGetUniformLocation(programId, "viewMatrix");
-	modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");
-	textureSamplerLocation = glGetUniformLocation(programId, "textureSampler");
-	lightColour = glGetUniformLocation(programId, "lightColour");
-	lightPosition = glGetUniformLocation(programId, "lightPosition");
-	viewPosition = glGetUniformLocation(programId, "viewPosition");
+	// Get uniforms and attributes
+
 }
 
 
@@ -105,36 +93,11 @@ void ModelRenderer::drawModel(Model* model)
 
 	// Select the program in the rendering context
 
-	// Set the uniforms in the shader
-
+	// Set the shader uniforms
 	GLCALL(glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(transformationMat)));
 	GLCALL(glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMat)));
 	GLCALL(glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMat)));
-	GLCALL(glUniform3f(lightColour, 1.0f, 0.49f, 0.31f));
-	GLCALL(glUniform3f(lightPosition, 15.0f, 5.0f, 15.0f));
-	GLCALL(glUniform3fv(viewPosition, 1, glm::value_ptr(camera->getPositon())));
 
-	for (int i = 0; i < model->getVAOs().size(); i++) {
-		unsigned int vao = model->getVAOs()[i];
-		unsigned int vbo = model->getVBOs()[i];
-		unsigned int ibo = model->getVBOs()[i];
-		Texture* texture = model->getTextures()[i];
-		unsigned int elementCount = model->getIndexCounts()[i];
-
-		GLCALL(glEnableVertexAttribArray(0));
-		GLCALL(glEnableVertexAttribArray(1));
-		GLCALL(glEnableVertexAttribArray(2));
-
-		GLCALL(glBindVertexArray(vao));
-		glActiveTexture(GL_TEXTURE0);
-		glUniform1i(textureSamplerLocation, 0);
-		glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
-
-
-
-		GLCALL(glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, nullptr));
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-	}
+	// Bind vertex or buffer arrays
 	glUseProgram(0);
 }
