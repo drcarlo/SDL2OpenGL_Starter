@@ -7,6 +7,7 @@
 #include "TriangleRenderer.h"
 #include "QuadRenderer.h"
 #include "ModelRenderer.h"
+#include "Model.h"
 
 #include "Terrain.h"
 #include "Texture.h"
@@ -44,6 +45,7 @@ namespace GE {
 		TriangleRenderer* tri;
 		QuadRenderer* quad;
 		ModelRenderer* modelRenderer;
+		std::unique_ptr<Model> model;
 
 		// Scene Objects
 		Texture* terrainTexture;

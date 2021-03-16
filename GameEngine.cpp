@@ -61,17 +61,13 @@ namespace GE {
 		}
 
 		// Create camera object
-		cam = new Camera(glm::vec3(0.0f, 0.0f, 0.0f),	// cam position
-			glm::vec3(0.0f, 0.0f, 0.0f),				// cam look at
-			glm::vec3(0.0f, 1.0f, 0.0f),				// cam up direction
-			120, w / h, 0.1f, 800.0f);					// fov, aspect ratio, near and far clip planes
-		cam->setTarget(glm::vec3(0.5f, 0.0f, 0.5f));
+		cam = new Camera(glm::vec3(-100.0f, 0.0f, -100.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 120.0f, (float)w / (float)h, 1.0f, 800.0f);
+		cam->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
 
-		// Initialise the object renderers
-		tri = new TriangleRenderer();
-		tri->init();
-		
-
+		// Initialise the object 
+		modelRenderer = new ModelRenderer(cam);
+		model = std::unique_ptr<Model>(new Model("resources/models/ChibiCarlo.obj"));
+		if (!model->init()) return false;
 		// Woo! All setup so we can return success
 		return true;
 	}
@@ -82,7 +78,6 @@ namespace GE {
 		SDL_PumpEvents();
 
 		SDL_Event evt;
-
 		// Check for quit event
 		if (SDL_PeepEvents(&evt, 1, SDL_GETEVENT, SDL_QUIT, SDL_QUIT)) {
 			// If user quit the program, then return false
@@ -104,18 +99,10 @@ namespace GE {
 	void GameEngine::draw() {
 		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// GL Immediate mode to render a triangle to the screen
-		// Requires setting GL minor version to 3.1
-		/*glBegin(GL_TRIANGLES);
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glVertex2f(-1.0f, 0.0f);
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glVertex2f(1.0f, 0.0f);
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glVertex2f(0.0f, 2.0f);
-		glEnd();*/
+		
+		modelRenderer->drawModel(model.get());
 
 		// Render the VBOs
 
@@ -126,11 +113,10 @@ namespace GE {
 	// When additional objects are added, ensure these are also freed safely
 	void GameEngine::shutdown() {
 		// Release object renderers
-		tri->destroy();
 		
 		// Release memory associate with camera and primitive renderers
-		delete tri;
 		delete cam;
+		delete modelRenderer;
 
 		SDL_GL_DeleteContext(glContext);
 		SDL_DestroyWindow(window);

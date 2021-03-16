@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Model.h"
 #include <gl/glew.h>
 #include <iostream>
 #include "Terrain.h"
@@ -8,8 +9,9 @@
 #include <glm/ext/scalar_constants.hpp>
 #include "Camera.h"
 #include "Terrain.h"
+#include "Utils.h"
 
-class Model;
+
 
 class ModelRenderer
 {
@@ -25,4 +27,5 @@ private:
 	unsigned int programId, vertexArrayObject;
 
 	int vertexPositionLocation, modelMatrixLocation, viewMatrixLocation, projectionMatrixLocation, uvLocation, textureSamplerLocation;
+	int lightColour, lightPosition, viewPosition;
 };

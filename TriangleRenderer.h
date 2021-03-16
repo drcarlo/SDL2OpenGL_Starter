@@ -4,6 +4,8 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include "Camera.h"
+#include "Utils.h"
+
 
 namespace GE {
 	class TriangleRenderer {

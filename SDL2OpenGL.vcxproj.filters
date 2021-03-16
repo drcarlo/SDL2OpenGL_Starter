@@ -42,6 +42,12 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameEngine.h">
@@ -74,5 +80,18 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\vertex_shader.glsl" />
+    <None Include="resources\shaders\fragment_shader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\unda\unda\resources\models\ChibiCarlo\ChibiCarlo.obj" />
   </ItemGroup>
 </Project>

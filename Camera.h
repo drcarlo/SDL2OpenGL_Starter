@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace GE {
@@ -14,13 +15,15 @@ namespace GE {
 			aspectR = ar;
 			nearClip = near;
 			farClip = far;
-
+			target = cam_target;
 			updateCamMatrices();
 		}
 
 		~Camera() {
 
 		}
+
+		const glm::vec3& getPositon() { return pos; }
 
 		// Access methods
 		float getPosX() {

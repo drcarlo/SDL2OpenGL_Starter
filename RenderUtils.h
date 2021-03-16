@@ -1,10 +1,14 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 #include <gl/glew.h>
+
+
 
 namespace GE
 {
+
 	struct Vertex {
 		Vertex(float xPos, float yPos, float zPos, float uCoord, float vCoord) {
 			x = xPos;
@@ -19,5 +23,6 @@ namespace GE
 
 	unsigned int createVBO(const std::vector<Vertex>& vertices);
 	unsigned int createIBO(const std::vector<unsigned int>& indices);
+
 };
 

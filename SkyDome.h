@@ -5,6 +5,4 @@ class Skydome {
 public:
 	Skydome();
 private:
-
-
 };

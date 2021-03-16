@@ -1,42 +1,38 @@
 #include "TriangleRenderer.h"
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
+#include "Utils.h"
 
 namespace GE {
 	// Represents a vertex in the engine
-	struct Vertex {
-		// Location
-		float x, y, z;
-		// Colour
-		float r, g, b, a;
+	//struct Vertex {
+	//	// Location
+	//	float x, y, z;
+	//	// Colour
+	//	float r, g, b, a;
 
-		// Constructors
-		// Sets vertex to passed values
-		Vertex(float _x, float _y, float _z, float _r, float _g, float _b, float _a) {
-			// Location
-			x = _x;
-			y = _y;
-			z = _z;
-			// Position
-			r = _r;
-			g = _g;
-			b = _b;
-			a = _a;
-		}
+	//	// Constructors
+	//	// Sets vertex to passed values
+	//	Vertex(float _x, float _y, float _z, float _r, float _g, float _b, float _a) {
+	//		// Location
+	//		x = _x;
+	//		y = _y;
+	//		z = _z;
+	//		// Position
+	//		r = _r;
+	//		g = _g;
+	//		b = _b;
+	//		a = _a;
+	//	}
 
-		// Sets vertex to origin and no colour
-		Vertex() {
-			x = y = z = 0.0f;
-			r = g = b = a = 0.0f;
-		}
-	};
+	//	// Sets vertex to origin and no colour
+	//	Vertex() {
+	//		x = y = z = 0.0f;
+	//		r = g = b = a = 0.0f;
+	//	}
+	//};
 
 	// Vertices to define the triangle - note the CCW winding order
-	Vertex vertexData[] = {
-		Vertex(-1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f), 
-		Vertex(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f),
-		Vertex(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f)
-	};
 
 	/*Vertex vertexData[] = {
 	Vertex(-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
@@ -223,7 +219,7 @@ namespace GE {
 		glGenBuffers(1, &vboTriangle);
 		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
 		// Transfer vertices to graphics memory
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 	}
 
 	// Update is where any animation would occur for example
@@ -249,24 +245,31 @@ namespace GE {
 		glUseProgram(programId);
 
 		// Set the uniforms in the shader
+
 		glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, glm::value_ptr(transformationMat));
+		
 		glUniformMatrix4fv(viewUniformId, 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(projectionUniformId, 1, GL_FALSE, glm::value_ptr(projectionMat));
 
 		// Define the structure of a vertex for OpenGL to select values from the vertex buffer
 		// store this in the vertexPos3DLocation attribute
-		glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, x));
+
+		//glVertexAttribPointer(vertexPos3DLocation, 3, GL_RGBA, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, x));
+		GLCALL(glVertexAttribPointer(vertexPos3DLocation, 3, GL_RGBA, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x)));
 		// Enable the attribute to be passed vertices from the VBO
+		
+		
 		glEnableVertexAttribArray(vertexPos3DLocation);
+		
 		// Where to find the colour data and what is the size of it
 		// Colour data is 4 floats from the r member, stride is a Vertex apart
-		glVertexAttribPointer(vertexFragmentColourLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, r));
+		//glVertexAttribPointer(vertexFragmentColourLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, r));
 		// Enable the attribute to be passed vertex colour from the VBO
 		glEnableVertexAttribArray(vertexFragmentColourLocation);
 		// Select the VBO into the context
 		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
 		// Draw the triangle
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertexData)/sizeof(Vertex));
+		//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertexData)/sizeof(Vertex));
 		// Deselect the attribute from the context
 		glDisableVertexAttribArray(vertexPos3DLocation);
 		// Deselect the attribute from the context
