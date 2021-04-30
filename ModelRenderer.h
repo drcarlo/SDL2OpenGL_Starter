@@ -19,13 +19,15 @@ public:
 	ModelRenderer(GE::Camera* c);
 	virtual ~ModelRenderer() = default;
 	void drawModel(Model* model);
-
+	void setRotation(float x, float y, float z) { rotation = glm::vec3(x, y, z); }
 
 private:
 	float pi;
 	GE::Camera* camera;
 	unsigned int programId, vertexArrayObject;
 
+	glm::vec3 rotation;
 	int vertexPositionLocation, modelMatrixLocation, viewMatrixLocation, projectionMatrixLocation, uvLocation, textureSamplerLocation;
 	int lightColour, lightPosition, viewPosition;
+	int normalMapLocation;
 };

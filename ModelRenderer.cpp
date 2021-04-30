@@ -58,32 +58,24 @@ ModelRenderer::ModelRenderer(GE::Camera* c) : camera(c)
 		std::cerr << "[ERROR] Could not validate shader in Model Renderer! \n" << std::endl;
 		return;
 	}
-
 	glDetachShader(programId, vertexShader);
 	glDetachShader(programId, fragmentShader);
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	// Retrieve attributes/uniforms
-
-	glGenVertexArrays(1, &vertexArrayObject);
-	glBindVertexArray(vertexArrayObject);
-
-	int vPos = glGetAttribLocation(programId, "vertexPosition");
-	int vNorm = glGetAttribLocation(programId, "vertexUV");
-	int vUV = glGetAttribLocation(programId, "vertexNormal");
+	GLCALL(glUseProgram(programId));
 
 
-	glUseProgram(programId);
-	
-	
+	textureSamplerLocation = glGetUniformLocation(programId, "imageTexture");
 	projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix");
 	viewMatrixLocation = glGetUniformLocation(programId, "viewMatrix");
 	modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");
-	textureSamplerLocation = glGetUniformLocation(programId, "textureSampler");
-	lightColour = glGetUniformLocation(programId, "lightColour");
-	lightPosition = glGetUniformLocation(programId, "lightPosition");
-	viewPosition = glGetUniformLocation(programId, "viewPosition");
+
+
+	
+	GLCALL(glUseProgram(NULL));
+
+	// Retrieve attributes/uniforms
 }
 
 
@@ -91,7 +83,7 @@ void ModelRenderer::drawModel(Model* model)
 {
 	glUseProgram(programId);
 	// Calculate the transformation matrix for the object
-	glm::vec3 position(0, 0, 0), rotation(0, -120, 0), scale(1, 1, 1);
+	glm::vec3 position(5, 0, 5), scale(1, 1, 1);
 	glm::mat4 transformationMat = glm::mat4(1.0f);
 	transformationMat = glm::translate(transformationMat, glm::vec3(position.x, position.y, position.z));
 	transformationMat = glm::rotate(transformationMat, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -110,31 +102,32 @@ void ModelRenderer::drawModel(Model* model)
 	GLCALL(glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(transformationMat)));
 	GLCALL(glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMat)));
 	GLCALL(glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMat)));
-	GLCALL(glUniform3f(lightColour, 1.0f, 0.49f, 0.31f));
-	GLCALL(glUniform3f(lightPosition, 15.0f, 5.0f, 15.0f));
-	GLCALL(glUniform3fv(viewPosition, 1, glm::value_ptr(camera->getPositon())));
+	//GLCALL(glUniform3f(lightColour, 1.0f, 0.49f, 0.31f));
+	//GLCALL(glUniform3f(lightPosition, 15.0f, 5.0f, 15.0f));
+	//GLCALL(glUniform3fv(viewPosition, 1, glm::value_ptr(camera->getPositon())));
 
-	for (int i = 0; i < model->getVAOs().size(); i++) {
-		unsigned int vao = model->getVAOs()[i];
-		unsigned int vbo = model->getVBOs()[i];
-		unsigned int ibo = model->getVBOs()[i];
-		Texture* texture = model->getTextures()[i];
-		unsigned int elementCount = model->getIndexCounts()[i];
 
-		GLCALL(glEnableVertexAttribArray(0));
-		GLCALL(glEnableVertexAttribArray(1));
-		GLCALL(glEnableVertexAttribArray(2));
+	unsigned int vao = model->getVAOs()[0];
 
-		GLCALL(glBindVertexArray(vao));
-		glActiveTexture(GL_TEXTURE0);
-		glUniform1i(textureSamplerLocation, 0);
-		glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+	unsigned int elementCount = model->getIndexCounts()[0];
+
+	Texture* texture = model->getTextures()[0];
+	GLCALL(glBindVertexArray(vao));
+		GLCALL(glUniform1i(textureSamplerLocation, 0));
+		GLCALL(glBindTexture(GL_TEXTURE_2D, texture->getTextureId()));
+		GLCALL(glActiveTexture(GL_TEXTURE0));
+
+
+		//Texture* normal_map = model->getNormalMaps()[i];
 
 
 
+		//GLCALL(glUniform1i(textureSamplerLocation, 2));
+		//GLCALL(glActiveTexture(GL_TEXTURE0 + 2));
+		//GLCALL(glBindTexture(GL_TEXTURE_2D, normal_map->getTextureId()));
 		GLCALL(glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, nullptr));
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-	}
+
+		GLCALL(glBindVertexArray(NULL));
+
 	glUseProgram(0);
 }

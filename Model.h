@@ -23,9 +23,11 @@ public:
 	const std::vector<unsigned int>& getIndexCounts() { return indexCounts; }
 	const std::vector<unsigned int>& getVertexCounts() { return vertexCounts; }
 	const std::vector<Texture*>& getTextures() { return textures; }
+	const std::vector<Texture*>& getNormalMaps() { return normals; }
 
 private:
 	std::string file;
 	std::vector<unsigned int> vaos, vbos, ibos, indexCounts, vertexCounts;
 	std::vector<Texture*> textures;
+	std::vector<Texture*> normals;
 };

@@ -22,8 +22,8 @@ namespace GE {
 			return false;
 		}
 		// Set the OpenGL version for the program
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // OpenGL 3+
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1); // OpenGL 3.1
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // OpenGL 3+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5); // OpenGL 3.1
 		// Set the type of profile which is core meaning modern OpenGL
 		// means no legacy features for backwards compatibility
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -61,13 +61,14 @@ namespace GE {
 		}
 
 		// Create camera object
-		cam = new Camera(glm::vec3(-100.0f, 0.0f, -100.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 120.0f, (float)w / (float)h, 1.0f, 800.0f);
+		cam = new Camera(glm::vec3(-15.0f, 0.0f, -15.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 120.0f, (float)w / (float)h, 1.0f, 800.0f);
 		cam->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
 
 		// Initialise the object 
-		modelRenderer = new ModelRenderer(cam);
-		model = std::unique_ptr<Model>(new Model("resources/models/ChibiCarlo.obj"));
+		model = std::unique_ptr<Model>(new Model("resources/models/space_frigate_6.obj"));
+
 		if (!model->init()) return false;
+		modelRenderer = new ModelRenderer(cam);
 		// Woo! All setup so we can return success
 		return true;
 	}
@@ -91,7 +92,8 @@ namespace GE {
 	// Update method which updates the game logic
 	// Used to invoke GE object update methods
 	void GameEngine::update() {
-		tri->update();
+		rotation += 0.2f;
+		modelRenderer->setRotation(0.0f, rotation, 0.0f);
 	}
 
 	// Draw method. Used to render scenes to the window frame
@@ -100,8 +102,11 @@ namespace GE {
 		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		modelRenderer->drawModel(model.get());
 
 		// Render the VBOs

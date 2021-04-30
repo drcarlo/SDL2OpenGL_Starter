@@ -12,7 +12,7 @@
 #include "Terrain.h"
 #include "Texture.h"
 #include "SkyDome.h"
-
+#include "FontRenderer.h"
 
 namespace GE {
 	class GameEngine {
@@ -52,7 +52,9 @@ namespace GE {
 		Texture* skydomeTexture;
 		Terrain* terrain;
 		Skydome* skydome;
+		FontRenderer* fontRenderer;
 
+		float rotation = 0.0f;
 	};
 
 	// Helper Function
