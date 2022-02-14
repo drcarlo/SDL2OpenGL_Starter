@@ -165,6 +165,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="FPSCam.h" />
     <ClInclude Include="GameEngine.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="QuadRenderer.h" />
     <ClInclude Include="RenderUtils.h" />

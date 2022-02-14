@@ -4,8 +4,8 @@
 
 namespace GE {
 	GameEngine::GameEngine() {
-		w = 1280;
-		h = 1024;
+		w = 800;
+		h = 600;
 		windowflags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 	}
 	GameEngine::GameEngine(int _w, int _h) {
@@ -61,17 +61,20 @@ namespace GE {
 		}
 
 		// Create camera object
-		cam = new Camera(glm::vec3(0.0f, 0.0f, 0.0f),	// cam position
+		cam = new Camera(glm::vec3(-10.0f, 50.0f, 10.0f),	// cam position
 			glm::vec3(0.0f, 0.0f, 0.0f),				// cam look at
 			glm::vec3(0.0f, 1.0f, 0.0f),				// cam up direction
 			120, w / h, 0.1f, 800.0f);					// fov, aspect ratio, near and far clip planes
-		cam->setTarget(glm::vec3(0.5f, 0.0f, 0.5f));
+		cam->setTarget(glm::vec3(10.5f, 0.0f, 10.5f));
 
 		// Initialise the object renderers
+		
 		tri = new TriangleRenderer();
 		tri->init();
-		
-
+		modelRenderer = new ModelRenderer(cam);
+		terrain = new Terrain();
+		terrainTexture = new Texture("resources/terrain/terrain-texture.png");
+		modelRenderer->setTexture(terrainTexture);
 		// Woo! All setup so we can return success
 		return true;
 	}
@@ -106,16 +109,7 @@ namespace GE {
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// GL Immediate mode to render a triangle to the screen
-		// Requires setting GL minor version to 3.1
-		/*glBegin(GL_TRIANGLES);
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glVertex2f(-1.0f, 0.0f);
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glVertex2f(1.0f, 0.0f);
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glVertex2f(0.0f, 2.0f);
-		glEnd();*/
+		modelRenderer->drawModel(terrain);
 
 		// Render the VBOs
 
@@ -131,6 +125,8 @@ namespace GE {
 		// Release memory associate with camera and primitive renderers
 		delete tri;
 		delete cam;
+		delete terrain;
+		delete modelRenderer;
 
 		SDL_GL_DeleteContext(glContext);
 		SDL_DestroyWindow(window);

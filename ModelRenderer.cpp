@@ -12,11 +12,17 @@ ModelRenderer::ModelRenderer(GE::Camera* c) : camera(c)
 	programId = glCreateProgram();
 
 	const char* shaderSource =
-		"Source Code for your shaders!\n"
-		"Again, we should probably load shaders from files\n"
-		"\n"
-		"As this is prone to errors and will get difficult to manage;\n"
-		"\n";
+		"#version 140\n"
+		"in vec3 vertex;\n"
+		"in vec2 vertexUV;\n"
+		"uniform mat4 projection;\n"
+		"uniform mat4 view;\n"
+		"uniform mat4 transform;\n"
+		"out vec2 uv;\n"
+		"void main() {\n"
+		"gl_Position = projection * view * transform * vec4(vertex.xyz, 1.0f);\n"
+		"uv = vertexUV;\n"
+		"}\n";
 
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, (const char**)&shaderSource, nullptr);
@@ -31,8 +37,13 @@ ModelRenderer::ModelRenderer(GE::Camera* c) : camera(c)
 
 	// Fragment Shader
 	shaderSource =
-		"Source Code for your shaders!\n"
-		"\n";
+		"#version 140\n"
+		"in vec2 uv;\n"
+		"out vec4 fragmentColour;\n"
+		"uniform sampler2D textureSampler;\n"
+		"void main() {\n"
+		"fragmentColour = texture(textureSampler, uv).rgba;\n"
+		"}\n";
 
 	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, (const char**)&shaderSource, nullptr);
@@ -44,11 +55,27 @@ ModelRenderer::ModelRenderer(GE::Camera* c) : camera(c)
 		return;
 	}
 	glAttachShader(programId, fragmentShader);
-
-	// Some code to link, compile and validate you shaders 
-
+	glLinkProgram(programId);
+	glGetShaderiv(programId, GL_LINK_STATUS, &success);
+	if (!success) {
+		printf("[ERROR] Could not link shaders in Model Renderer! \n");
+		return;
+	}
+	
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	glUseProgram(programId);
+
+	// Some code to link, compile and validate you shaders 
+	
+	transformMatrixLocation = glGetUniformLocation(programId, "transform");
+	projectionMatrixLocation = glGetUniformLocation(programId, "projection");
+	viewMatrixLocation = glGetUniformLocation(programId, "view");
+	textureSamplerLocation = glGetUniformLocation(programId, "textureSampler");
+	vertexPositionLocation = glGetAttribLocation(programId, "vertex");
+	uvLocation = glGetAttribLocation(programId, "vertexUV");
+	glUseProgram(0);
 }
 
 
@@ -61,35 +88,37 @@ void ModelRenderer::drawModel(Model* model)
 
 	// Create and manipulate the Model Matrix
 	glm::mat4 modelMatrix = glm::mat4(1.0f); // Identity matrix
-	modelMatrix = glm::rotate(modelMatrix, rotation.x * 180.0f / pi, glm::vec3(1.0f, 0.0f, 0.0f));
-	modelMatrix = glm::rotate(modelMatrix, rotation.y * 180.0f / pi, glm::vec3(0.0f, 1.0f, 0.0f));
-	modelMatrix = glm::rotate(modelMatrix, rotation.z * 180.0f / pi, glm::vec3(0.0f, 0.0f, 1.0f));
-	modelMatrix = glm::translate(modelMatrix, translation);
-	modelMatrix = glm::scale(modelMatrix, scale);
+	//modelMatrix = glm::rotate(modelMatrix, rotation.x * 180.0f / pi, glm::vec3(1.0f, 0.0f, 0.0f));
+	//modelMatrix = glm::rotate(modelMatrix, rotation.y * 180.0f / pi, glm::vec3(0.0f, 1.0f, 0.0f));
+	//modelMatrix = glm::rotate(modelMatrix, rotation.z * 180.0f / pi, glm::vec3(0.0f, 0.0f, 1.0f));
+	//modelMatrix = glm::translate(modelMatrix, translation);
+	//modelMatrix = glm::scale(modelMatrix, scale);
 
 	// Set Uniforms/Attributes
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glUniformMatrix4fv(transformMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(camera->getProjectionMatrix()));
 
 	// Vertex positions
+	glBindBuffer(GL_ARRAY_BUFFER, model->getVbo());
+	//
 	glEnableVertexAttribArray(vertexPositionLocation);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glVertexAttribPointer(vertexPositionLocation, 3, GL_FLOAT, GL_FALSE, sizeof(GE::Vertex), nullptr);
+	glVertexAttribPointer(vertexPositionLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
 	// UV coordinates
 	glEnableVertexAttribArray(uvLocation);
-	//glVertexAttribPointer(uvLocation, 3, GL_FLOAT, GL_FALSE, sizeof(GE::Vertex), (void*)offsetof(GE::Vertex, u));
+	glVertexAttribPointer(uvLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
 
 
 	// Texture
+	glBindTexture(GL_TEXTURE_2D, texture->getTextureLocation());
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(textureSamplerLocation, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Indices
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->getIbo());
+	
 	// Drawing Function
-	//glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, model->getIndexCount(), GL_UNSIGNED_INT, nullptr);
 
 	// Remember to clean up and deselect everything! 
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);

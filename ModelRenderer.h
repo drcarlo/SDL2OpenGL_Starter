@@ -7,9 +7,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext/scalar_constants.hpp>
 #include "Camera.h"
-#include "Terrain.h"
+#include "Model.h"
+#include "Texture.h"
 
-class Model;
+
+
 
 class ModelRenderer
 {
@@ -17,12 +19,13 @@ public:
 	ModelRenderer(GE::Camera* c);
 	virtual ~ModelRenderer() = default;
 	void drawModel(Model* model);
-
+	void setTexture(Texture* tex) { texture = tex; }
 
 private:
 	float pi;
+	Texture* texture;
 	GE::Camera* camera;
 	unsigned int programId, vertexArrayObject;
 
-	int vertexPositionLocation, modelMatrixLocation, viewMatrixLocation, projectionMatrixLocation, uvLocation, textureSamplerLocation;
+	int vertexPositionLocation, transformMatrixLocation, viewMatrixLocation, projectionMatrixLocation, uvLocation, textureSamplerLocation;
 };
